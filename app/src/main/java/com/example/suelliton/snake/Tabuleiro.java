@@ -12,13 +12,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Tabuleiro extends AppCompatActivity {
+    int points = 0;
     int tamGrid = 25;
     ImageView GRID[][] ;
     ArrayList SNAKE = new ArrayList<>();
@@ -26,6 +29,7 @@ public class Tabuleiro extends AppCompatActivity {
     int[] anterior = new int[2];
     int pos[]  = new int[2];
     int[] previous = new int[2];
+    int[] fruit = new int[2];
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +106,7 @@ public class Tabuleiro extends AppCompatActivity {
        pos[0] = tamGrid/2;
        pos[1] = tamGrid/2;
        SNAKE.add(pos);//adiciona no vetor snake como se fosse a cabeça posicao 00 do arraylist
+       setFruit();
        move(direction,false);//passa a direcao para move
     }
 
@@ -116,9 +121,10 @@ public class Tabuleiro extends AppCompatActivity {
                         @Override
                         public void run() {
                             setHead(direction);
+
                             move(direction,false);
                         }
-                    },100);
+                    },1000);
                  }
         }).start();
 
@@ -128,16 +134,29 @@ public class Tabuleiro extends AppCompatActivity {
     public void setHead(int[] direction){
 
         pos = (int[]) SNAKE.get(0);//éga a cabeça
-        setWhite(GRID[pos[0]][pos[1]]);//printa a cabeça
+        setWhite(GRID[pos[0]][pos[1]]);//printa a cabeça debranco
         previous = pos;
         pos[0] = pos[0] + direction[0];//incrementa a posicao dacabeça
         pos[1] = pos[1] + direction[1];//incrementa a posicao dacabeça
         pos = checkPos(pos);
-        setBlack(GRID[pos[0]][pos[1]]);
+        setBlack(GRID[pos[0]][pos[1]]); //printa a cabeça de preto
         SNAKE.set(0, pos);
-
+        if(pos[0] == fruit[0] && pos[1] == fruit[1]){
+            setBlack(GRID[pos[0]][pos[1]]);
+            setFruit();
+            TextView tv = (TextView) findViewById(R.id.text_points);
+            points +=50;
+            tv.setText(""+points);
+        }
 
     }
+
+    public void setFruit(){
+        fruit[0] = new Random().nextInt(tamGrid-1);
+        fruit[1] = new Random().nextInt(tamGrid-1);
+        setOrange(GRID[fruit[0]][fruit[1]]);
+    }
+
     public void setPrevious(int[] pos){
         if(direction[0] == 0 && direction[1] == 1 ){
             setWhite(GRID[pos[0]][pos[1]-1]);
@@ -180,6 +199,9 @@ public class Tabuleiro extends AppCompatActivity {
     }
     public void setWhite(ImageView imageView){
         imageView.setImageResource(R.drawable.white);
+    }
+    public void setOrange(ImageView imageView){
+        imageView.setImageResource(R.drawable.orange);
     }
 
 

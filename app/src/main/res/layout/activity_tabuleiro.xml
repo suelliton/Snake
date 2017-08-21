@@ -58,6 +58,16 @@
                 tools:layout_editor_absoluteY="129dp" />
 
         </LinearLayout>
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Points:" />
+        <TextView
+            android:id="@+id/text_points"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
 
         <Button
             android:id="@+id/button13"
