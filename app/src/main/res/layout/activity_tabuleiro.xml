@@ -6,7 +6,69 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.suelliton.snake.Tabuleiro">
+    <GridLayout
+        android:id="@+id/grid"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Esquerda"
+                tools:layout_editor_absoluteX="97dp"
+                tools:layout_editor_absoluteY="129dp" />
+
+            <Button
+                android:id="@+id/btn_up"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cima"
+                tools:layout_editor_absoluteX="97dp"
+                tools:layout_editor_absoluteY="33dp" />
+
+            <Button
+                android:id="@+id/btn_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Baixo"
+                tools:layout_editor_absoluteX="185dp"
+                tools:layout_editor_absoluteY="81dp" />
+
+            <Button
+                android:id="@+id/btn_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Direita"
+                tools:layout_editor_absoluteX="290dp"
+                tools:layout_editor_absoluteY="129dp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Pause"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="81dp" />
+
+    </LinearLayout>
 
 
 </android.widget.LinearLayout>

@@ -26,11 +26,12 @@ public class MainActivity extends AppCompatActivity {
         btn_continue = (Button) findViewById(R.id.button_continue);
         btn_configure = (Button) findViewById(R.id.button_configure);
 
+        /*
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Glide.with(this)
                 .load(R.drawable.snake_gif) // aqui é teu gif
                 .asGif()
-                .into(imageView);
+                .into(imageView);*/
 
 
 

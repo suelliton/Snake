@@ -4,14 +4,12 @@ package com.example.suelliton.snake;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -20,10 +18,10 @@ import java.util.ArrayList;
 public class Tabuleiro extends AppCompatActivity {
     int tamGrid = 25;
     ImageView GRID[][] ;
-
-    ArrayList SNAKE = new ArrayList<Array>();
+    ArrayList position = new ArrayList<Integer>() ;
+    ArrayList SNAKE = new ArrayList<ArrayList>();
     int direction[] = {0,1} ;
-    final int[] cell = new int[]{0, 0};
+    int[] currentDirection;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +39,7 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = 0;
                 direction[1] =-1;
-                move(direction);
+                move( direction,true);
             }
         });
         btn_down.setOnClickListener(new View.OnClickListener() {
@@ -49,10 +47,26 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = 1;
                 direction[1] = 0;
-                move(direction);
+                move(direction,true);
             }
         });
 
+        btn_up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                direction[0] = -1;
+                direction[1] = 0;
+                move(direction,true);
+            }
+        });
+        btn_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                direction[0] = 0;
+                direction[1] = 1;
+                move(direction,true);
+            }
+        });
 
         GridLayout grid = (GridLayout) findViewById(R.id.grid);
         grid.setColumnCount(tamGrid);
@@ -75,34 +89,51 @@ public class Tabuleiro extends AppCompatActivity {
 
 
     public void startGame(){
-       ImageView img =  GRID[tamGrid/2][tamGrid/2] ;
-       img.setImageResource(R.drawable.black);
-
-
-       move(direction);
+       ImageView img =  GRID[tamGrid/2][tamGrid/2] ;//recupera o imageview central
+       img.setImageResource(R.drawable.black);//pinta a primeira celula central
+       position.add(tamGrid/2);//define a posicao central como a cabeça da snake
+       position.add(tamGrid/2);
+        Log.i("position", String.valueOf(position));
+       SNAKE.add(position);//adiciona no vetor snake como se fosse a cabeça posicao 00 do arraylist
+        Log.i("snake", String.valueOf(SNAKE.get(0)));
+        move(direction,false);//passa a direcao para move
 
 
     }
 
-    public void move( final int[] direction){
+    public void move(final int[] direction, final boolean changeDirection){
+        currentDirection = direction;
+        ArrayList pos  = new ArrayList();
+        pos = (ArrayList) SNAKE.get(0);
 
-        SNAKE.add(cell);
-        final int i = cell[0];
-        final int j = cell[1];
+        Log.i("pos", String.valueOf(pos));
+        final int i = (int) pos.get(0);
+        final int j = (int) pos.get(1);
+
         final Handler handler = new Handler();
+        final ArrayList finalPos = pos;
         new  Thread(new Runnable(){
-
                  public void run(){
 
                      handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
 
+
                             ImageView img = GRID[i][j] ;
                             img.setImageResource(R.drawable.black);
-                        cell[0] += direction[0] + i  ;
-                        cell[1] += direction[1] + j;
-                        move(direction);
+
+
+                            ImageView img2 = GRID[i - direction[0]][j - direction[1]];
+                            img2.setImageResource(R.drawable.white);
+
+
+                            finalPos.set(0, i + direction[0]);
+                            finalPos.set(1, j + direction[1]);
+                            SNAKE.set(0, finalPos);
+                            Log.i("finalpos", String.valueOf(finalPos));
+
+                            move(direction,false);
                         }
                     },1000);
                  }
