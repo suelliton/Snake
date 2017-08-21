@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class Tabuleiro extends AppCompatActivity {
     int tamGrid = 25;
     ImageView GRID[][] ;
-    ArrayList position = new ArrayList<Integer>() ;
-    ArrayList SNAKE = new ArrayList<ArrayList>();
+    int position[]  ;
+    ArrayList SNAKE = new ArrayList<>();
     int direction[] = {0,1} ;
     int[] currentDirection;
     @Override
@@ -91,27 +91,27 @@ public class Tabuleiro extends AppCompatActivity {
     public void startGame(){
        ImageView img =  GRID[tamGrid/2][tamGrid/2] ;//recupera o imageview central
        img.setImageResource(R.drawable.black);//pinta a primeira celula central
-       position.add(tamGrid/2);//define a posicao central como a cabeça da snake
-       position.add(tamGrid/2);
-        Log.i("position", String.valueOf(position));
+
+       position[0] = tamGrid/2;//define a posicao central como a cabeça da snake
+       position[1] = tamGrid/2;
+       Log.i("position", String.valueOf(position));
        SNAKE.add(position);//adiciona no vetor snake como se fosse a cabeça posicao 00 do arraylist
-        Log.i("snake", String.valueOf(SNAKE.get(0)));
-        move(direction,false);//passa a direcao para move
+       Log.i("snake", String.valueOf(SNAKE.get(0)));
+       move(direction,false);//passa a direcao para move
 
 
     }
 
     public void move(final int[] direction, final boolean changeDirection){
         currentDirection = direction;
-        ArrayList pos  = new ArrayList();
-        pos = (ArrayList) SNAKE.get(0);
-
-        Log.i("pos", String.valueOf(pos));
-        final int i = (int) pos.get(0);
-        final int j = (int) pos.get(1);
+        int pos[]  = new int[2];
+        pos = (int[]) SNAKE.get(0);
+        final int i = (int) pos[0];
+        final int j = (int) pos[1];
 
         final Handler handler = new Handler();
-        final ArrayList finalPos = pos;
+
+        final int[] finalPos = pos;
         new  Thread(new Runnable(){
                  public void run(){
 
@@ -119,19 +119,15 @@ public class Tabuleiro extends AppCompatActivity {
                         @Override
                         public void run() {
 
+                            setBlack(GRID[i][j]);
 
-                            ImageView img = GRID[i][j] ;
-                            img.setImageResource(R.drawable.black);
-
-
-                            ImageView img2 = GRID[i - direction[0]][j - direction[1]];
-                            img2.setImageResource(R.drawable.white);
+                            setWhite(GRID[i - direction[0]][j - direction[1]]);
 
 
-                            finalPos.set(0, i + direction[0]);
-                            finalPos.set(1, j + direction[1]);
+                            finalPos[0] = i + direction[0];
+                            finalPos[0] = j + direction[1];
                             SNAKE.set(0, finalPos);
-                            Log.i("finalpos", String.valueOf(finalPos));
+
 
                             move(direction,false);
                         }
@@ -141,6 +137,13 @@ public class Tabuleiro extends AppCompatActivity {
 
     }
 
+
+    public void setBlack(ImageView imageView){
+        imageView.setImageResource(R.drawable.black);
+    }
+    public void setWhite(ImageView imageView){
+        imageView.setImageResource(R.drawable.white);
+    }
 
 
 
