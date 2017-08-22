@@ -31,6 +31,8 @@ public class Tabuleiro extends AppCompatActivity {
     int pos[]  = new int[2];
     int[] previous = new int[2];
     int[] fruit = new int[2];
+    int[] ultimo = new int[2];
+    int[] tail = new int[2];
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = 0;
                 direction[1] =-1;
-                setPrevious(pos);
+
             }
         });
         btn_down.setOnClickListener(new View.OnClickListener() {
@@ -57,7 +59,7 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = 1;
                 direction[1] = 0;
-                setPrevious(pos);
+
             }
         });
 
@@ -66,7 +68,7 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = -1;
                 direction[1] = 0;
-                setPrevious(pos);
+
             }
         });
         btn_right.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +76,7 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = 0;
                 direction[1] = 1;
-                setPrevious(pos);
+
             }
         });
 
@@ -108,10 +110,10 @@ public class Tabuleiro extends AppCompatActivity {
        pos[1] = tamGrid/2;
        SNAKE.add(pos);//adiciona no vetor snake como se fosse a cabeça posicao 00 do arraylist
        setFruit();
-       move(direction,false);//passa a direcao para move
+       move(direction);//passa a direcao para move
     }
 
-    public void move(final int[] direction, final boolean changeDirection){
+    public void move(final int[] direction){
 
         final Handler handler = new Handler();
 
@@ -121,11 +123,10 @@ public class Tabuleiro extends AppCompatActivity {
                      handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            setHead(direction);
-
-                            move(direction,false);
+                            organizeBody(direction);
+                            move(direction);
                         }
-                    },1000);
+                    },500);
                  }
         }).start();
 
@@ -134,29 +135,52 @@ public class Tabuleiro extends AppCompatActivity {
 
     public void setHead(int[] direction){
 
-
-        pos = (int[]) SNAKE.get(0);//éga a cabeça
-        if (SNAKE.size() == 1) {
-            setWhite(GRID[pos[0]][pos[1]]);//printa a cabeça debranco
-        }
-        previous = pos;
+        pos = (int[]) SNAKE.get(0);//péga a cabeça
         pos[0] = pos[0] + direction[0];//incrementa a posicao dacabeça
         pos[1] = pos[1] + direction[1];//incrementa a posicao dacabeça
         pos = checkPos(pos);
         setBlack(GRID[pos[0]][pos[1]]); //printa a cabeça de preto
         SNAKE.set(0, pos);
+        checkEat(pos);
+
+
+
+    }
+    public void setBody(){
+        pos = (int[]) SNAKE.get(SNAKE.size()-1);
+        tail[0] = pos[0];
+        tail[1] = pos[1];
+        for(int i = SNAKE.size()-1;i > 0 ;i--){
+            pos = (int[]) SNAKE.get(i-1);
+            SNAKE.set(i,pos);
+        }
+        setWhite(GRID[tail[0]][tail[1]]);
+        setHead(direction);
+
+    }
+    public void organizeBody(int[] direction) {
+        setBody();
+        printSnake();
+
+    }
+    public void printSnake() {
+        for (int i = 0; i < SNAKE.size(); i++) {
+            pos = (int[]) SNAKE.get(i);
+            setBlack(GRID[pos[0]][pos[1]]);
+        }
+    }
+
+    public void checkEat(int[] pos){
         if(pos[0] == fruit[0] && pos[1] == fruit[1]){
             setBlack(GRID[pos[0]][pos[1]]);
             setFruit();
             TextView tv = (TextView) findViewById(R.id.text_points);
             points +=50;
             tv.setText(""+ points);
-            SNAKE.add(previous);
-            setBody();
-
+            SNAKE.add(tail);
         }
-
     }
+
 
     public void setFruit(){
         fruit[0] = new Random().nextInt(tamGrid-1);
@@ -164,24 +188,8 @@ public class Tabuleiro extends AppCompatActivity {
         setOrange(GRID[fruit[0]][fruit[1]]);
     }
 
-    public void setPrevious(int[] pos){
-        if(direction[0] == 0 && direction[1] == 1 ){
-            setWhite(GRID[pos[0]][pos[1]-1]);
-        }
-        if(direction[0] == 0 && direction[1] == -1 ){
-            setWhite(GRID[pos[0]][pos[1]+1]);
-        }
-        if(direction[0] == 1 && direction[1] == 0 ){
-            setWhite(GRID[pos[0]-1][pos[1]]);
-        }
-        if(direction[0] == -1 && direction[1] == 0 ){
-            setWhite(GRID[pos[0]+1][pos[1]]);
-        }
-    }
 
-    public void setBody() {
-        
-    }
+
 
     public int[] checkPos(int[] pos){
         if(pos[0] == tamGrid-1){

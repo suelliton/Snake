@@ -68,6 +68,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="" />
+        <TextView
+            android:id="@+id/deb"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="" />
 
         <Button
             android:id="@+id/button13"
