@@ -21,6 +21,7 @@ import java.util.Random;
 
 
 public class Tabuleiro extends AppCompatActivity {
+    boolean eat = false;
     int points = 0;
     int tamGrid = 25;
     ImageView GRID[][] ;
@@ -133,8 +134,11 @@ public class Tabuleiro extends AppCompatActivity {
 
     public void setHead(int[] direction){
 
+
         pos = (int[]) SNAKE.get(0);//éga a cabeça
-        setWhite(GRID[pos[0]][pos[1]]);//printa a cabeça debranco
+        if (SNAKE.size() == 1) {
+            setWhite(GRID[pos[0]][pos[1]]);//printa a cabeça debranco
+        }
         previous = pos;
         pos[0] = pos[0] + direction[0];//incrementa a posicao dacabeça
         pos[1] = pos[1] + direction[1];//incrementa a posicao dacabeça
@@ -146,7 +150,10 @@ public class Tabuleiro extends AppCompatActivity {
             setFruit();
             TextView tv = (TextView) findViewById(R.id.text_points);
             points +=50;
-            tv.setText(""+points);
+            tv.setText(""+ points);
+            SNAKE.add(previous);
+            setBody();
+
         }
 
     }
@@ -172,8 +179,8 @@ public class Tabuleiro extends AppCompatActivity {
         }
     }
 
-    public void setBody(){
-
+    public void setBody() {
+        
     }
 
     public int[] checkPos(int[] pos){
