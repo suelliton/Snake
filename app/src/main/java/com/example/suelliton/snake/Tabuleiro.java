@@ -132,7 +132,7 @@ public class Tabuleiro extends AppCompatActivity {
 
                             move(direction);
                         }
-                    },500);
+                    },3000);
                  }
         }).start();
 
