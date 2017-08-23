@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -27,12 +26,9 @@ public class Tabuleiro extends AppCompatActivity {
     ImageView GRID[][] ;
     ArrayList SNAKE = new ArrayList<>();
     int direction[] = new int[2] ;
-    int[] anterior = new int[2];
-    int pos[]  = new int[2];
-    int[] previous = new int[2];
     int[] fruit = new int[2];
-    int[] ultimo = new int[2];
-    int[] tail = new int[2];
+    int cont = 0;
+    int[] tail;
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,31 +95,41 @@ public class Tabuleiro extends AppCompatActivity {
 
 
     public void startGame(){
-       //primeira direção
-       //previous[0] = (tamGrid/2) ;
-       //previous[1] = (tamGrid/2);
        setBlack(GRID[tamGrid/2][tamGrid/2]);
        direction[0] = 0;
        direction[1] = 1;
-        //define a posicao central como a cabeça da snake
+       int[] pos = new int[2];
+       int[] pos2 = new int[2];
+        int[] pos3 = new int[2];
+        int[] pos4 = new int[2];
+
        pos[0] = tamGrid/2;
        pos[1] = tamGrid/2;
-       SNAKE.add(pos);//adiciona no vetor snake como se fosse a cabeça posicao 00 do arraylist
-       setFruit();
-       move(direction);//passa a direcao para move
+       SNAKE.add(pos);
+        pos2[0] = tamGrid/2;
+        pos2[1] = (tamGrid/2)-1;
+        SNAKE.add(pos2);
+        pos3[0] = tamGrid/2;
+        pos3[1] = (tamGrid/2)-2;
+        SNAKE.add(pos3);
+        pos4[0] = tamGrid/2;
+        pos4[1] = (tamGrid/2)-3;
+        SNAKE.add(pos4);
+
+        setFruit();
+
+       move(direction);
     }
 
     public void move(final int[] direction){
-
         final Handler handler = new Handler();
-
         new  Thread(new Runnable(){
                  public void run(){
-
                      handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             organizeBody(direction);
+
                             move(direction);
                         }
                     },500);
@@ -134,51 +140,78 @@ public class Tabuleiro extends AppCompatActivity {
 
 
     public void setHead(int[] direction){
-
+        //pego a posicao 0 referente a cabeça e somo com a direção para encontrar a nova posicao
+        //apos seto na posicao 0 de snake o novo valor e antes disso verifico se a posicao é válida
+        int[] pos = new int[2];
         pos = (int[]) SNAKE.get(0);//péga a cabeça
-        pos[0] = pos[0] + direction[0];//incrementa a posicao dacabeça
-        pos[1] = pos[1] + direction[1];//incrementa a posicao dacabeça
+        pos[0] = pos[0] + direction[0];//incrementa a posicao dacabeça x
+        pos[1] = pos[1] + direction[1];//incrementa a posicao dacabeça y
         pos = checkPos(pos);
         setBlack(GRID[pos[0]][pos[1]]); //printa a cabeça de preto
         SNAKE.set(0, pos);
-        checkEat(pos);
+        //aqui checo se a cabeça comeu a fruta se simm ele adiciona as posições do ultimo elemento ao arra snake
+        //o mesmo que seria apagado agora faz parte da cobra.
+        //caso contrario seto a ultima referencia ou seja o rabo como sendo uma celula branca do proprio grid
+        //fazendo com que a cobra ande
+        if(checkEat(pos)){
+            SNAKE.add(tail);
+            Toast.makeText(Tabuleiro.this, "Tamanho:"+SNAKE.size(), Toast.LENGTH_SHORT).show();
+        }else{
+            setWhite(GRID[tail[0]][tail[1]]);
+        }
 
 
 
     }
     public void setBody(){
-        pos = (int[]) SNAKE.get(SNAKE.size()-1);
-        tail[0] = pos[0];
-        tail[1] = pos[1];
-        for(int i = SNAKE.size()-1;i > 0 ;i--){
-            pos = (int[]) SNAKE.get(i-1);
-            SNAKE.set(i,pos);
+        //só printo os valores atuais
+        TextView t = (TextView) findViewById(R.id.deb);
+        String v = new String();
+        for(int i = 0;i < SNAKE.size() ;i++){
+            int[] pos;
+            pos = (int[]) SNAKE.get(i);
+            v = v + "|"+pos[0]+"-"+pos[1];
+            t.setText(v);
         }
-        setWhite(GRID[tail[0]][tail[1]]);
+        //pego o ultimo elemento o rabd pra depois apagalo ou não
+        tail = (int[]) SNAKE.get(SNAKE.size()-1);
+        //aqui realoco os elementos da cobra, o ultimo recebe o penultimo etc
+        //a cabeça não recebe nada ainda
+        for(int i = SNAKE.size()-1;i > 0 ;i--){
+            SNAKE.set(i,SNAKE.get(i-1));
+        }
+
+
+
+        //aqui chamo pra setar a cabeça
         setHead(direction);
+
 
     }
     public void organizeBody(int[] direction) {
         setBody();
-        printSnake();
-
     }
     public void printSnake() {
+        int[] pos ;
         for (int i = 0; i < SNAKE.size(); i++) {
             pos = (int[]) SNAKE.get(i);
             setBlack(GRID[pos[0]][pos[1]]);
         }
+
     }
 
-    public void checkEat(int[] pos){
+    public boolean checkEat(int[] pos){
         if(pos[0] == fruit[0] && pos[1] == fruit[1]){
             setBlack(GRID[pos[0]][pos[1]]);
             setFruit();
             TextView tv = (TextView) findViewById(R.id.text_points);
             points +=50;
             tv.setText(""+ points);
-            SNAKE.add(tail);
+
+
+            return true;
         }
+        return false;
     }
 
 
