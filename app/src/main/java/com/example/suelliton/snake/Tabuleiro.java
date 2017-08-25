@@ -1,6 +1,7 @@
 package com.example.suelliton.snake;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -17,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -31,6 +35,9 @@ public class Tabuleiro extends AppCompatActivity {
     int[] fruit = new int[2];
     boolean pause;
     int record = 0;
+    int size;
+    int difficult;
+    int speed ;
 
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -38,8 +45,8 @@ public class Tabuleiro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabuleiro);
 
-
-
+        setupGame();
+        
         final ImageButton btn_left = (ImageButton) findViewById(R.id.imb_left);
         final ImageButton btn_up = (ImageButton) findViewById(R.id.imb_up);
         final ImageButton btn_down = (ImageButton) findViewById(R.id.imb_down);
@@ -128,15 +135,47 @@ public class Tabuleiro extends AppCompatActivity {
         }
         startGame();
     }
+    public  void setupGame(){
+        recoveryData();
+        if(difficult == 1){
+            speed = 2000;
+        }else if(difficult == 2){
+            speed = 1000;
+        } else if(difficult == 3){
+            speed = 500;
+        }
+        if(size == 50){
+            tamGrid= 50;
+        }else if(size == 25){
+            tamGrid = 25;
+        }
+    }
+    public void saveData(){
 
+        SharedPreferences prefs = getSharedPreferences("preferences",MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("record",record);
+        editor.putInt("size",size);
+        editor.putInt("difficult",difficult);
+        editor.putInt("speed",speed);
+        editor.commit();
+    }
+    public void recoveryData(){
+
+        SharedPreferences prefs = getSharedPreferences("preferences",MODE_PRIVATE);
+        record = prefs.getInt("record",0);
+        size = prefs.getInt("size",25);
+        difficult = prefs.getInt("difficult",2);
+        speed = prefs.getInt("speed",1000);
+    }
 
     public void startGame(){
-       recoveryData();
+
        direction[0] = 0;
        direction[1] = 1;
        int[] pos = new int[2] ;
-       pos[0] = tamGrid/2;
-       pos[1] = tamGrid/2;
+       pos[0] = size/2;
+       pos[1] = size/2;
         SNAKE.add(0,pos);
         setFruit();
         move();
@@ -154,10 +193,13 @@ public class Tabuleiro extends AppCompatActivity {
                             if(!pause) {
                             setBody();
                             printSnake();
+
+                            speed = speed -1;
                             move();
                             }
+
                         }
-                    }, 500);
+                    }, speed);
                 }
             }).start();
 
@@ -213,16 +255,7 @@ public class Tabuleiro extends AppCompatActivity {
         }
 
     }
-    public void saveData(){
-        SharedPreferences prefs = getSharedPreferences("preferences",MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("record",record);
-        editor.commit();
-    }
-    public void recoveryData(){
-        SharedPreferences prefs = getSharedPreferences("preferences",MODE_PRIVATE);
-        record = prefs.getInt("record",0);
-    }
+
 
     public void printSnake() {
         for (int i = 0; i < SNAKE.size(); i++) {
@@ -308,6 +341,7 @@ public class Tabuleiro extends AppCompatActivity {
         super.onRestart();
         pause = false;
     }
+
 
 
 }

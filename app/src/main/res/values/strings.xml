@@ -3,4 +3,5 @@
     <string name="novo">New game</string>
     <string name="continuar">Continue</string>
     <string name="configure">Configure</string>
+    <string name="preferences">preferences</string>
 </resources>
