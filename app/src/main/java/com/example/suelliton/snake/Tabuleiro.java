@@ -17,18 +17,18 @@ import android.widget.Toast;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 
 public class Tabuleiro extends AppCompatActivity {
-    boolean eat = false;
+    ImageView GRID[][] ;
+    ArrayList SNAKE = new ArrayList<>();
     int points = 0;
     int tamGrid = 25;
-    ImageView GRID[][] ;
-    ArrayList SNAKE = new ArrayList<Arrays>();
     int direction[] = new int[2] ;
     int[] fruit = new int[2];
-    int[] tail;
+
 
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -98,12 +98,17 @@ public class Tabuleiro extends AppCompatActivity {
     public void startGame(){
        direction[0] = 0;
        direction[1] = 1;
-       int pos[] = new int[2] ;
+       int[] pos = new int[2] ;
        pos[0] = tamGrid/2;
        pos[1] = tamGrid/2;
-       SNAKE.add(pos);
-       setFruit();
-       move();
+       int[] pos2 = new int[2] ;
+       pos2[0] = tamGrid/2;
+       pos2[1] = (tamGrid/2)-1;
+
+        SNAKE.add(0,pos);
+        SNAKE.add(1,pos2);
+        setFruit();
+        move();
     }
 
     public void move(){
@@ -113,20 +118,23 @@ public class Tabuleiro extends AppCompatActivity {
                      handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            setBody();
-                            printSnake();
+                            String v = new String();
                             TextView t = (TextView) findViewById(R.id.deb);
-                            String v = "";
                             for(int i = 0;i < SNAKE.size() ;i++){
-                                int[] pos;
-                                pos = (int[]) SNAKE.get(i);
-                                v = v + "|"+pos[0]+"-"+pos[1];
+                                int[] p;
+                                p = (int[]) SNAKE.get(i);
+                                v = v + "|"+p[0]+"-"+p[1];
                                 t.setText(v);
                             }
+                            setBody();
+                            printSnake();
+
+
+
                             //só printo os valores atuais
                             move();
                         }
-                    },1000);
+                    },500);
                  }
         }).start();
 
@@ -136,22 +144,25 @@ public class Tabuleiro extends AppCompatActivity {
     public int[] setHead(){
         //pego a posicao 0 referente a cabeça e somo com a direção para encontrar a nova posicao
         //apos seto na posicao 0 de snake o novo valor e antes disso verifico se a posicao é válida
-        int[] pos = (int[]) SNAKE.get(0);//péga a cabeça
-        pos[0] = pos[0] + direction[0];//incrementa a posicao dacabeça x
-        pos[1] = pos[1] + direction[1];//incrementa a posicao dacabeça y
+        int[] pos = new int[2];
+        int[] p = (int[]) SNAKE.get(0);//péga a cabeça
+        pos[0] = p[0] + direction[0];//incrementa a posicao dacabeça x
+        pos[1] = p[1] + direction[1];//incrementa a posicao dacabeça y
         pos = checkPos(pos);
         SNAKE.set(0, pos);
         return pos;
     }
     public void setBody(){
+        int[] tail;
         //pego o ultimo elemento o rabd pra depois apagalo ou não
          tail = (int[]) SNAKE.get(SNAKE.size() - 1);
             //aqui realoco os elementos da cobra, o ultimo recebe o penultimo etc
         //a cabeça não recebe nada ainda
             for (int i = SNAKE.size() - 1; i > 0; i--) {
-                int[] pos = new int[2];
+                int[] pos ;
                 pos = (int[]) SNAKE.get(i - 1);
                 SNAKE.set(i, pos);
+
             }
 
         //aqui chamo pra setar a cabeça
@@ -172,7 +183,8 @@ public class Tabuleiro extends AppCompatActivity {
     }
     public void printSnake() {
         for (int i = 0; i < SNAKE.size(); i++) {
-            int[] pos = (int[]) SNAKE.get(i);
+            int[] pos = new int[2];
+            pos = (int[]) SNAKE.get(i);
             setBlack(GRID[pos[0]][pos[1]]);
         }
     }
