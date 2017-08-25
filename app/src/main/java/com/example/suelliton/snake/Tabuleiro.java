@@ -1,6 +1,8 @@
 package com.example.suelliton.snake;
 
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
@@ -14,21 +16,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 
 public class Tabuleiro extends AppCompatActivity {
+
     ImageView GRID[][] ;
     ArrayList SNAKE = new ArrayList<>();
     int points = 0;
     int tamGrid = 25;
     int direction[] = new int[2] ;
     int[] fruit = new int[2];
-
+    boolean pause;
+    int record = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -37,17 +38,23 @@ public class Tabuleiro extends AppCompatActivity {
         setContentView(R.layout.activity_tabuleiro);
 
 
+/*
+        final Button btn_left = (Button) findViewById(R.id.btn_left);
+        final Button btn_up = (Button) findViewById(R.id.btn_up);
+        final Button btn_down = (Button) findViewById(R.id.btn_down);
+        final Button btn_right = (Button) findViewById(R.id.btn_right);
+        final Button btn_pause = (Button) findViewById(R.id.btn_pause);
 
-        Button btn_left = (Button) findViewById(R.id.btn_left);
-        Button btn_up = (Button) findViewById(R.id.btn_up);
-        Button btn_down = (Button) findViewById(R.id.btn_down);
-        Button btn_right = (Button) findViewById(R.id.btn_right);
 
         btn_left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 direction[0] = 0;
                 direction[1] =-1;
+                btn_left.setClickable(false);
+                btn_right.setClickable(false);
+                btn_down.setClickable(true);
+                btn_up.setClickable(true);
 
             }
         });
@@ -56,6 +63,10 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = 1;
                 direction[1] = 0;
+                btn_left.setClickable(true);
+                btn_right.setClickable(true);
+                btn_down.setClickable(false);
+                btn_up.setClickable(false);
 
             }
         });
@@ -65,6 +76,10 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = -1;
                 direction[1] = 0;
+                btn_left.setClickable(true);
+                btn_right.setClickable(true);
+                btn_down.setClickable(false);
+                btn_up.setClickable(false);
 
             }
         });
@@ -73,9 +88,24 @@ public class Tabuleiro extends AppCompatActivity {
             public void onClick(View v) {
                 direction[0] = 0;
                 direction[1] = 1;
+                btn_left.setClickable(false);
+                btn_right.setClickable(false);
+                btn_down.setClickable(true);
+                btn_up.setClickable(true);
 
             }
         });
+        btn_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!pause)
+                    pause = true;
+                else
+                    pause = false;
+                move();
+            }
+        });
+*/
 
         GridLayout grid = (GridLayout) findViewById(R.id.grid);
         grid.setColumnCount(tamGrid);
@@ -96,47 +126,35 @@ public class Tabuleiro extends AppCompatActivity {
 
 
     public void startGame(){
+       recoveryData();
        direction[0] = 0;
        direction[1] = 1;
        int[] pos = new int[2] ;
        pos[0] = tamGrid/2;
        pos[1] = tamGrid/2;
-       int[] pos2 = new int[2] ;
-       pos2[0] = tamGrid/2;
-       pos2[1] = (tamGrid/2)-1;
-
         SNAKE.add(0,pos);
-        SNAKE.add(1,pos2);
         setFruit();
         move();
+
     }
 
     public void move(){
-        final Handler handler = new Handler();
-        new  Thread(new Runnable(){
-                 public void run(){
-                     handler.postDelayed(new Runnable() {
+
+            final Handler handler = new Handler();
+            new Thread(new Runnable() {
+                public void run() {
+                    handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            String v = new String();
-                            TextView t = (TextView) findViewById(R.id.deb);
-                            for(int i = 0;i < SNAKE.size() ;i++){
-                                int[] p;
-                                p = (int[]) SNAKE.get(i);
-                                v = v + "|"+p[0]+"-"+p[1];
-                                t.setText(v);
-                            }
+                            if(!pause) {
                             setBody();
                             printSnake();
-
-
-
-                            //só printo os valores atuais
                             move();
+                            }
                         }
-                    },500);
-                 }
-        }).start();
+                    }, 500);
+                }
+            }).start();
 
     }
 
@@ -179,8 +197,28 @@ public class Tabuleiro extends AppCompatActivity {
         }else{
             setWhite(GRID[tail[0]][tail[1]]);
         }
+        if(checkColision(head)){
+            saveData();
+            Bundle bundle = new Bundle();
+            bundle.putInt("points",points);
+            bundle.putInt("record",record);
+            Intent intent = new Intent(Tabuleiro.this,Result.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
 
     }
+    public void saveData(){
+        SharedPreferences prefs = getSharedPreferences("preferences",MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("record",record);
+        editor.commit();
+    }
+    public void recoveryData(){
+        SharedPreferences prefs = getSharedPreferences("preferences",MODE_PRIVATE);
+        record = prefs.getInt("record",0);
+    }
+
     public void printSnake() {
         for (int i = 0; i < SNAKE.size(); i++) {
             int[] pos = new int[2];
@@ -192,17 +230,32 @@ public class Tabuleiro extends AppCompatActivity {
     public boolean checkEat(int[] pos){
         if(pos[0] == fruit[0] && pos[1] == fruit[1]){
             setFruit();
-            TextView tv = (TextView) findViewById(R.id.text_points);
+            //TextView tv = (TextView) findViewById(R.id.text_points);
             points +=50;
-            tv.setText(""+ points);
+            if(points >= record){
+                record = points;
+            }
+            //tv.setText(""+ points);
             return true;
+        }
+        return false;
+    }
+
+    public boolean checkColision(int[] pos){
+
+        for(int i=1;i < SNAKE.size();i++){
+            int[] p = (int[]) SNAKE.get(i);
+            if(pos[0] == p[0] && pos[1] == p[1]){
+                return true;
+            }
         }
         return false;
     }
 
 
     public void setFruit(){
-        fruit[0] = new Random().nextInt(tamGrid-1);
+
+        fruit[0] = new Random().nextInt((tamGrid-1));
         fruit[1] = new Random().nextInt(tamGrid-1);
         setOrange(GRID[fruit[0]][fruit[1]]);
     }
@@ -238,11 +291,18 @@ public class Tabuleiro extends AppCompatActivity {
         imageView.setImageResource(R.drawable.orange);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(!pause)
+            pause = true;
+    }
 
-
-
-
-
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        pause = false;
+    }
 
 
 }

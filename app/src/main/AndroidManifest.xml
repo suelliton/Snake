@@ -16,7 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Tabuleiro"></activity>
+        <activity android:name=".Tabuleiro" />
+        <activity android:name=".Result" />
+        <activity android:name=".Configure"></activity>
     </application>
 
 </manifest>
