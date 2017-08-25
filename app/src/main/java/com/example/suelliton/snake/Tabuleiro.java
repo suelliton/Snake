@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,12 +39,12 @@ public class Tabuleiro extends AppCompatActivity {
         setContentView(R.layout.activity_tabuleiro);
 
 
-/*
-        final Button btn_left = (Button) findViewById(R.id.btn_left);
-        final Button btn_up = (Button) findViewById(R.id.btn_up);
-        final Button btn_down = (Button) findViewById(R.id.btn_down);
-        final Button btn_right = (Button) findViewById(R.id.btn_right);
-        final Button btn_pause = (Button) findViewById(R.id.btn_pause);
+
+        final ImageButton btn_left = (ImageButton) findViewById(R.id.imb_left);
+        final ImageButton btn_up = (ImageButton) findViewById(R.id.imb_up);
+        final ImageButton btn_down = (ImageButton) findViewById(R.id.imb_down);
+        final ImageButton btn_right = (ImageButton) findViewById(R.id.imb_right);
+        final ImageButton btn_pause = (ImageButton) findViewById(R.id.imb_pause);
 
 
         btn_left.setOnClickListener(new View.OnClickListener() {
@@ -98,14 +99,18 @@ public class Tabuleiro extends AppCompatActivity {
         btn_pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!pause)
+                if(!pause) {
                     pause = true;
-                else
+                    btn_pause.setImageResource(R.drawable.play_teste);
+                }else {
                     pause = false;
-                move();
+                    btn_pause.setImageResource(R.drawable.pause_teste);
+                    move();
+                }
+
             }
         });
-*/
+
 
         GridLayout grid = (GridLayout) findViewById(R.id.grid);
         grid.setColumnCount(tamGrid);
