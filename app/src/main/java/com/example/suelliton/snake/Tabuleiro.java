@@ -46,7 +46,7 @@ public class Tabuleiro extends AppCompatActivity {
         setContentView(R.layout.activity_tabuleiro);
 
         setupGame();
-        
+
         final ImageButton btn_left = (ImageButton) findViewById(R.id.imb_left);
         final ImageButton btn_up = (ImageButton) findViewById(R.id.imb_up);
         final ImageButton btn_down = (ImageButton) findViewById(R.id.imb_down);
@@ -268,12 +268,12 @@ public class Tabuleiro extends AppCompatActivity {
     public boolean checkEat(int[] pos){
         if(pos[0] == fruit[0] && pos[1] == fruit[1]){
             setFruit();
-            //TextView tv = (TextView) findViewById(R.id.text_points);
+            TextView tv = (TextView) findViewById(R.id.tx_points);
             points +=50;
             if(points >= record){
                 record = points;
             }
-            //tv.setText(""+ points);
+            tv.setText("Points:"+ points);
             return true;
         }
         return false;
