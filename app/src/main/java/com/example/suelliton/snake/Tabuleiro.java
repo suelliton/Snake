@@ -1,9 +1,9 @@
 package com.example.suelliton.snake;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.RequiresApi;
@@ -11,15 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,7 +33,7 @@ public class Tabuleiro extends AppCompatActivity {
     int record = 0;
     int size;
     int difficult;
-    int speed ;
+    int speed =500;
 
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
@@ -136,6 +132,9 @@ public class Tabuleiro extends AppCompatActivity {
         startGame();
     }
     public  void setupGame(){
+        MediaPlayer mp = MediaPlayer.create(this, R.raw.pai);
+        mp.start();
+        mp.setVolume(50,50);
         recoveryData();
         if(difficult == 1){
             speed = 2000;
@@ -149,6 +148,7 @@ public class Tabuleiro extends AppCompatActivity {
         }else if(size == 25){
             tamGrid = 25;
         }
+        speed = 400;
     }
     public void saveData(){
 
@@ -270,6 +270,10 @@ public class Tabuleiro extends AppCompatActivity {
             setFruit();
             TextView tv = (TextView) findViewById(R.id.tx_points);
             points +=50;
+            MediaPlayer mp = MediaPlayer.create(this, R.raw.deli);
+            mp.start();
+
+            mp.setVolume(100,100);
             if(points >= record){
                 record = points;
             }
